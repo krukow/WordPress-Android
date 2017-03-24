@@ -1,12 +1,15 @@
 package org.wordpress.android.ui.people;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,6 +72,17 @@ public class PeopleListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.people_list, menu);
+        inflater.inflate(R.menu.search_content, menu);
+
+        // Associate searchable configuration with the SearchView
+        Activity activity = getActivity();
+        SearchManager searchManager =
+                (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.menu_search_content).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(activity.getComponentName()));
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
