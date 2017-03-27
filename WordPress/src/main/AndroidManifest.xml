@@ -202,6 +202,12 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/post_list_searchable" />
         </activity>
+        <activity android:name=".ui.posts.PostsListSearchActivity"
+                  android:theme="@style/Calypso.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.posts.PostPreviewActivity"
             android:label="@string/preview_post"
