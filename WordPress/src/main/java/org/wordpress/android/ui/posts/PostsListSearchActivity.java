@@ -1,6 +1,6 @@
 package org.wordpress.android.ui.posts;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import android.os.Bundle;
  * https://developer.android.com/training/search/setup.html
  */
 
-public class PostsListSearchActivity extends Activity {
+public class PostsListSearchActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
