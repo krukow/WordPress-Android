@@ -4,12 +4,16 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.widget.ArrayAdapter;
 
 import org.wordpress.android.WordPress;
 import org.wordpress.android.fluxc.model.PostModel;
 import org.wordpress.android.fluxc.model.SiteModel;
 import org.wordpress.android.fluxc.store.PostStore;
 import org.wordpress.android.fluxc.store.SiteStore;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -39,7 +43,18 @@ public class PostsListSearchActivity extends ListActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mSite = mSiteStore.getSites().get(0);
             String query = intent.getStringExtra(SearchManager.QUERY);
-            // TODO use the query to search your data somehow
+            List<PostModel> matches = mPostStore.searchPostTitles(mSite, query, false);
+            if (matches.isEmpty()) {
+                setListAdapter(null);
+            } else {
+                updateList(matches);
+            }
         }
+    }
+
+    private void updateList(@NonNull List<PostModel> newItems) {
+        String[] listText = new String[newItems.size()];
+        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listText);
+        setListAdapter(adapter);
     }
 }
