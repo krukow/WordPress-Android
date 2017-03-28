@@ -43,7 +43,7 @@ public class PostsListSearchActivity extends ListActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mSite = mSiteStore.getSites().get(0);
             String query = intent.getStringExtra(SearchManager.QUERY);
-            List<PostModel> matches = mPostStore.searchPostTitles(mSite, query, false);
+            List<PostModel> matches = mPostStore.searchPostTitles(mSite, query);
             if (matches.isEmpty()) {
                 setListAdapter(null);
             } else {
