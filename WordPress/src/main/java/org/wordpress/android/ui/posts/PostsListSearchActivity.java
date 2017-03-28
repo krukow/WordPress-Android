@@ -54,6 +54,9 @@ public class PostsListSearchActivity extends ListActivity {
 
     private void updateList(@NonNull List<PostModel> newItems) {
         String[] listText = new String[newItems.size()];
+        for (int i = 0; i < newItems.size(); ++i) {
+            listText[i] = newItems.get(0).getTitle();
+        }
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listText);
         setListAdapter(adapter);
     }
