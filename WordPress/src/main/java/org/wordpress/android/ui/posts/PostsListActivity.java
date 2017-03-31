@@ -115,6 +115,25 @@ public class PostsListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_content, menu);
 
+        final MenuItem actionItem = menu.findItem( R.id.action_search);
+        final SearchView searchView = (SearchView) actionItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ToastUtils.showToast(PostsListActivity.this, "SearchOnQueryTextSubmit: " + query);
+                if (!searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+                actionItem.collapseActionView();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                ToastUtils.showToast(PostsListActivity.this, "SearchOnQueryTextChanged: " + s);
+                return false;
+            }
+        });
 
         return true;
     }
