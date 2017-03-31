@@ -59,12 +59,7 @@ import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
 
-public class PostsListFragment extends Fragment
-        implements PostsListAdapter.OnPostsLoadedListener,
-        PostsListAdapter.OnLoadMoreListener,
-        PostsListAdapter.OnPostSelectedListener,
-        PostsListAdapter.OnPostButtonClickListener {
-
+public class PostsListFragment extends Fragment implements PostsListAdapter.OnPostButtonClickListener {
     public static final int POSTS_REQUEST_COUNT = 20;
 
     private SwipeToRefreshHelper mSwipeToRefreshHelper;
@@ -249,9 +244,6 @@ public class PostsListFragment extends Fragment
     private @Nullable PostsListAdapter getPostListAdapter() {
         if (mPostsListAdapter == null) {
             mPostsListAdapter = new PostsListAdapter(getActivity(), mSite, mIsPage);
-            mPostsListAdapter.setOnLoadMoreListener(this);
-            mPostsListAdapter.setOnPostsLoadedListener(this);
-            mPostsListAdapter.setOnPostSelectedListener(this);
             mPostsListAdapter.setOnPostButtonClickListener(this);
         }
 
@@ -428,7 +420,6 @@ public class PostsListFragment extends Fragment
     /*
      * called by the adapter after posts have been loaded
      */
-    @Override
     public void onPostsLoaded(int postCount) {
         if (!isAdded()) {
             return;
@@ -448,7 +439,6 @@ public class PostsListFragment extends Fragment
     /*
      * called by the adapter to load more posts when the user scrolls towards the last post
      */
-    @Override
     public void onLoadMore() {
         if (mCanLoadMorePosts && !mIsFetchingPosts) {
             requestPosts(true);
@@ -458,7 +448,6 @@ public class PostsListFragment extends Fragment
     /*
      * called by the adapter when the user clicks a post
      */
-    @Override
     public void onPostSelected(PostModel post) {
         onPostButtonClicked(PostListButton.BUTTON_EDIT, post);
     }

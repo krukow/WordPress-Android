@@ -73,9 +73,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         FORCED
     }
 
-    private OnLoadMoreListener mOnLoadMoreListener;
-    private OnPostsLoadedListener mOnPostsLoadedListener;
-    private OnPostSelectedListener mOnPostSelectedListener;
     private OnPostButtonClickListener mOnPostButtonClickListener;
 
     private final SiteModel mSite;
@@ -87,8 +84,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final boolean mIsStatsSupported;
     private final boolean mAlwaysShowAllButtons;
 
-    private boolean mIsLoadingPosts;
-
     private final List<PostModel> mPosts = new ArrayList<>();
     private final List<PostModel> mHiddenPosts = new ArrayList<>();
     private final Map<Integer, String> mFeaturedImageUrls = new HashMap<>();
@@ -96,6 +91,8 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final LayoutInflater mLayoutInflater;
 
     @Inject Dispatcher mDispatcher;
+    private boolean mIsLoadingPosts;
+
     @Inject protected PostStore mPostStore;
     @Inject protected MediaStore mMediaStore;
 
@@ -118,18 +115,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         // on larger displays we can always show all buttons
         mAlwaysShowAllButtons = (displayWidth >= 1080);
-    }
-
-    public void setOnLoadMoreListener(OnLoadMoreListener listener) {
-        mOnLoadMoreListener = listener;
-    }
-
-    public void setOnPostsLoadedListener(OnPostsLoadedListener listener) {
-        mOnPostsLoadedListener = listener;
-    }
-
-    public void setOnPostSelectedListener(OnPostSelectedListener listener) {
-        mOnPostSelectedListener = listener;
     }
 
     public void setOnPostButtonClickListener(OnPostButtonClickListener listener) {
@@ -294,17 +279,16 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         // load more posts when we near the end
-        if (mOnLoadMoreListener != null && position >= mPosts.size() - 1
-                && position >= PostsListFragment.POSTS_REQUEST_COUNT - 1) {
-            mOnLoadMoreListener.onLoadMore();
+        if (position >= mPosts.size() - 1 && position >= PostsListFragment.POSTS_REQUEST_COUNT - 1) {
+            // TODO
+//            mOnLoadMoreListener.onLoadMore();
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mOnPostSelectedListener != null) {
-                    mOnPostSelectedListener.onPostSelected(post);
-                }
+                // TODO
+//                mOnPostSelectedListener.onPostSelected(post);
             }
         });
     }
@@ -573,18 +557,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    public interface OnLoadMoreListener {
-        void onLoadMore();
-    }
-
-    public interface OnPostSelectedListener {
-        void onPostSelected(PostModel post);
-    }
-
-    public interface OnPostsLoadedListener {
-        void onPostsLoaded(int postCount);
-    }
-
     private class PostViewHolder extends RecyclerView.ViewHolder {
         private final TextView txtTitle;
         private final TextView txtExcerpt;
@@ -770,9 +742,8 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             mIsLoadingPosts = false;
 
-            if (mOnPostsLoadedListener != null) {
-                mOnPostsLoadedListener.onPostsLoaded(mPosts.size());
-            }
+            // TODO
+//            mOnPostsLoadedListener.on~PostsLoaded(mPosts.size());
         }
     }
 }
