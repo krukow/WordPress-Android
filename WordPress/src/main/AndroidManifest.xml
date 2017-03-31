@@ -190,23 +190,9 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity-alias>
-
         <activity
             android:name=".ui.posts.PostsListActivity"
-            android:theme="@style/Calypso.NoActionBar">
-            <meta-data android:name="android.app.default_searchable"
-                       android:value=".ui.posts.PostsListSearchActivity" />
-        </activity>
-        <activity
-            android:name=".ui.posts.PostsListSearchActivity"
-            android:theme="@style/Calypso.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/post_list_searchable" />
-        </activity>
+            android:theme="@style/Calypso.NoActionBar" />
         <activity
             android:name=".ui.posts.PostPreviewActivity"
             android:label="@string/preview_post"
