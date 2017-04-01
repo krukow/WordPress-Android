@@ -25,14 +25,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.wordpress.android.R;
 import org.wordpress.android.WordPress;
-import org.wordpress.android.fluxc.Dispatcher;
-import org.wordpress.android.fluxc.generated.MediaActionBuilder;
 import org.wordpress.android.fluxc.model.MediaModel;
 import org.wordpress.android.fluxc.model.PostModel;
 import org.wordpress.android.fluxc.model.SiteModel;
 import org.wordpress.android.fluxc.model.post.PostStatus;
 import org.wordpress.android.fluxc.store.MediaStore;
-import org.wordpress.android.fluxc.store.MediaStore.MediaPayload;
 import org.wordpress.android.fluxc.store.PostStore;
 import org.wordpress.android.ui.posts.PostUtils;
 import org.wordpress.android.ui.posts.PostsListFragment;
@@ -90,7 +87,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private final LayoutInflater mLayoutInflater;
 
-    @Inject Dispatcher mDispatcher;
     private boolean mIsLoadingPosts;
 
     @Inject protected PostStore mPostStore;
@@ -115,21 +111,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         // on larger displays we can always show all buttons
         mAlwaysShowAllButtons = (displayWidth >= 1080);
-    }
-
-    public void setOnPostButtonClickListener(OnPostButtonClickListener listener) {
-        mOnPostButtonClickListener = listener;
-    }
-
-    private PostModel getItem(int position) {
-        if (isValidPostPosition(position)) {
-            return mPosts.get(position);
-        }
-        return null;
-    }
-
-    private boolean isValidPostPosition(int position) {
-        return (position >= 0 && position < mPosts.size());
     }
 
     @Override
@@ -164,18 +145,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private boolean canShowStatsForPost(PostModel post) {
-        return mIsStatsSupported
-                && PostStatus.fromPost(post) == PostStatus.PUBLISHED
-                && !post.isLocalDraft()
-                && !post.isLocallyChanged();
-    }
-
-    private boolean canPublishPost(PostModel post) {
-        return post != null && !PostUploadService.isPostUploading(post) &&
-                (post.isLocallyChanged() || post.isLocalDraft() || PostStatus.fromPost(post) == PostStatus.DRAFT);
-    }
-
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         // nothing to do if this is the static endlist indicator
@@ -183,7 +152,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return;
         }
 
-        final PostModel post = mPosts.get(position);
+        final PostModel post = getItem(position);
         Context context = holder.itemView.getContext();
 
         if (holder instanceof PostViewHolder) {
@@ -291,6 +260,73 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //                mOnPostSelectedListener.onPostSelected(post);
             }
         });
+    }
+
+    public void setOnPostButtonClickListener(OnPostButtonClickListener listener) {
+        mOnPostButtonClickListener = listener;
+    }
+
+    public void loadPosts(LoadMode mode) {
+        if (mIsLoadingPosts) {
+            AppLog.d(AppLog.T.POSTS, "post adapter > already loading posts");
+        } else {
+            new LoadPostsTask(mode).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+    }
+
+    /*
+     * hides the post - used when the post is trashed by the user but the network request
+     * to delete the post hasn't completed yet
+     */
+    public void hidePost(PostModel post) {
+        mHiddenPosts.add(post);
+
+        int position = PostUtils.indexOfPostInList(post, mPosts);
+        if (position > -1) {
+            mPosts.remove(position);
+            if (mPosts.size() > 0) {
+                notifyItemRemoved(position);
+
+                //when page is removed update the next one in case we need to show a header
+                if (mIsPage) {
+                    notifyItemChanged(position);
+                }
+            } else {
+                // we must call notifyDataSetChanged when the only post has been deleted - if we
+                // call notifyItemRemoved the recycler will throw an IndexOutOfBoundsException
+                // because removing the last post also removes the end list indicator
+                notifyDataSetChanged();
+            }
+        }
+    }
+
+    public void unhidePost(PostModel post) {
+        if (mHiddenPosts.remove(post)) {
+            loadPosts(LoadMode.IF_CHANGED);
+        }
+    }
+
+    private PostModel getItem(int position) {
+        if (isValidPostPosition(position)) {
+            return mPosts.get(position);
+        }
+        return null;
+    }
+
+    private boolean isValidPostPosition(int position) {
+        return (position >= 0 && position < mPosts.size());
+    }
+
+    private boolean canShowStatsForPost(PostModel post) {
+        return mIsStatsSupported
+                && PostStatus.fromPost(post) == PostStatus.PUBLISHED
+                && !post.isLocalDraft()
+                && !post.isLocallyChanged();
+    }
+
+    private boolean canPublishPost(PostModel post) {
+        return post != null && !PostUploadService.isPostUploading(post) &&
+                (post.isLocallyChanged() || post.isLocalDraft() || PostStatus.fromPost(post) == PostStatus.DRAFT);
     }
 
     /*
@@ -517,46 +553,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         animOut.start();
     }
 
-    public void loadPosts(LoadMode mode) {
-        if (mIsLoadingPosts) {
-            AppLog.d(AppLog.T.POSTS, "post adapter > already loading posts");
-        } else {
-            new LoadPostsTask(mode).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-    }
-
-    /*
-     * hides the post - used when the post is trashed by the user but the network request
-     * to delete the post hasn't completed yet
-     */
-    public void hidePost(PostModel post) {
-        mHiddenPosts.add(post);
-
-        int position = PostUtils.indexOfPostInList(post, mPosts);
-        if (position > -1) {
-            mPosts.remove(position);
-            if (mPosts.size() > 0) {
-                notifyItemRemoved(position);
-
-                //when page is removed update the next one in case we need to show a header
-                if (mIsPage) {
-                    notifyItemChanged(position);
-                }
-            } else {
-                // we must call notifyDataSetChanged when the only post has been deleted - if we
-                // call notifyItemRemoved the recycler will throw an IndexOutOfBoundsException
-                // because removing the last post also removes the end list indicator
-                notifyDataSetChanged();
-            }
-        }
-    }
-
-    public void unhidePost(PostModel post) {
-        if (mHiddenPosts.remove(post)) {
-            loadPosts(LoadMode.IF_CHANGED);
-        }
-    }
-
     private class PostViewHolder extends RecyclerView.ViewHolder {
         private final TextView txtTitle;
         private final TextView txtExcerpt;
@@ -734,8 +730,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         MediaModel mediaToDownload = new MediaModel();
                         mediaToDownload.setMediaId(mediaId);
                         mediaToDownload.setLocalSiteId(mSite.getId());
-                        MediaPayload payload = new MediaPayload(mSite, mediaToDownload);
-                        mDispatcher.dispatch(MediaActionBuilder.newFetchMediaAction(payload));
+                        // TODO
+//                        MediaPayload payload = new MediaPayload(mSite, mediaToDownload);
+//                        mDispatcher.dispatch(MediaActionBuilder.newFetchMediaAction(payload));
                     }
                 }
             }
