@@ -32,8 +32,6 @@ public class PostsListActivity extends AppCompatActivity implements SearchView.O
     private PostsListFragment mPostList;
     private SiteModel mSite;
 
-    // Search
-    private MenuItem mSearchAction;
     private String mCurrentSearch;
 
     @Inject SiteStore mSiteStore;
@@ -81,9 +79,9 @@ public class PostsListActivity extends AppCompatActivity implements SearchView.O
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_content, menu);
 
-        mSearchAction = menu.findItem( R.id.action_search);
-        if (mSearchAction != null && mSearchAction.getActionView() != null) {
-            MenuItemCompat.setOnActionExpandListener(mSearchAction, new MenuItemCompat.OnActionExpandListener() {
+        MenuItem searchAction = menu.findItem(R.id.action_search);
+        if (searchAction != null && searchAction.getActionView() != null) {
+            MenuItemCompat.setOnActionExpandListener(searchAction, new MenuItemCompat.OnActionExpandListener() {
                 @Override
                 public boolean onMenuItemActionExpand(MenuItem menuItem) {
                     return true;
@@ -95,7 +93,7 @@ public class PostsListActivity extends AppCompatActivity implements SearchView.O
                     return true;
                 }
             });
-            ((SearchView) mSearchAction.getActionView()).setOnQueryTextListener(this);
+            ((SearchView) searchAction.getActionView()).setOnQueryTextListener(this);
         }
 
         return true;
