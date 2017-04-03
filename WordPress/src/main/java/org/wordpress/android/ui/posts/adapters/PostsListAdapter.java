@@ -635,6 +635,15 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    /**
+     * Clears existing posts and adds all from given list
+     */
+    public void setPosts(@NonNull List<PostModel> posts) {
+        mPosts.clear();
+        mPosts.addAll(posts);
+        notifyDataSetChanged();
+    }
+
     private class LoadPostsTask extends AsyncTask<Void, Void, Boolean> {
         private List<PostModel> tmpPosts;
         private final ArrayList<Long> mediaIdsToUpdate = new ArrayList<>();
