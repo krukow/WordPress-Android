@@ -335,9 +335,7 @@ public class PostsListFragment extends Fragment implements PostsListAdapter.OnPo
         if (searchTerm == null) {
             return mPostStore.getPostsForSite(mSite);
         }
-        // TODO: need searchPostTitles method in FluxC
-        return null;
-//        return mPostStore.searchPostTitles(mSite, searchTerm);
+        return mPostStore.searchPostTitles(mSite, searchTerm);
     }
 
     public void handleEditPostResult(int resultCode, Intent data) {
