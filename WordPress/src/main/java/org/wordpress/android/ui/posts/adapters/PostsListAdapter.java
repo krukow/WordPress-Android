@@ -249,15 +249,13 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         // load more posts when we near the end
         if (position >= mPosts.size() - 1 && position >= PostsListFragment.POSTS_REQUEST_COUNT - 1) {
-            // TODO
-//            mOnLoadMoreListener.onLoadMore();
+            // TODO, move this logic to activity or fragment
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO
-//                mOnPostSelectedListener.onPostSelected(post);
+                // TODO, move this logic to activity or fragment
             }
         });
     }
@@ -730,7 +728,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         MediaModel mediaToDownload = new MediaModel();
                         mediaToDownload.setMediaId(mediaId);
                         mediaToDownload.setLocalSiteId(mSite.getId());
-                        // TODO
+                        // TODO, move this logic to activity or fragment
 //                        MediaPayload payload = new MediaPayload(mSite, mediaToDownload);
 //                        mDispatcher.dispatch(MediaActionBuilder.newFetchMediaAction(payload));
                     }
@@ -739,8 +737,8 @@ public class PostsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             mIsLoadingPosts = false;
 
-            // TODO
-//            mOnPostsLoadedListener.on~PostsLoaded(mPosts.size());
+            // TODO, move this logic to activity or fragment
+//            mOnPostsLoadedListener.onPostsLoaded(mPosts.size());
         }
     }
 }
