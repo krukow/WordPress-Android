@@ -325,7 +325,7 @@ public class PostsListFragment extends Fragment implements PostsListAdapter.OnPo
             updateEmptyView(EmptyViewMessageType.NO_CONTENT);
         } else {
             PostsListAdapter adapter = new PostsListAdapter(getActivity(), mSite, mIsPage);
-            // TODO: set post items in adapter
+            adapter.setPosts(posts);
             mRecyclerView.setAdapter(adapter);
 
             hideEmptyView();
