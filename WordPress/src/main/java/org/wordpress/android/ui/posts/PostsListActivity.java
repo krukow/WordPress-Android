@@ -109,24 +109,25 @@ public class PostsListActivity extends AppCompatActivity implements SearchView.O
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == RequestCodes.EDIT_POST) {
             mPostList.handleEditPostResult(resultCode, data);
         }
     }
     @Override
     public boolean onQueryTextSubmit(String query) {
-        ToastUtils.showToast(PostsListActivity.this, "SearchOnQueryTextSubmit: " + query);
         // TODO: set filter on list fragment
-        // TODO: hide keyboard
+        // TODO: update Action Bar title text
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String query) {
-        ToastUtils.showToast(PostsListActivity.this, "SearchOnQueryTextChanged: " + query);
         mPostList.filterPosts(query);
         return false;
+    }
+
+    public boolean isRefreshing() {
+        return mPostList.isRefreshing();
     }
 
     private PostsListFragment getPostListFragment() {
@@ -171,9 +172,5 @@ public class PostsListActivity extends AppCompatActivity implements SearchView.O
         if (intent.hasExtra(EXTRA_SEARCH_TERM)) {
             mCurrentSearch = intent.getStringExtra(EXTRA_SEARCH_TERM);
         }
-    }
-
-    public boolean isRefreshing() {
-        return mPostList.isRefreshing();
     }
 }
