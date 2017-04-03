@@ -321,6 +321,7 @@ public class PostsListFragment extends Fragment implements PostsListAdapter.OnPo
     public void filterPosts(String searchTerm) {
         List<PostModel> posts = searchPostTitles(searchTerm);
         if (posts == null || posts.isEmpty()) {
+            mRecyclerView.setAdapter(null);
             updateEmptyView(EmptyViewMessageType.NO_CONTENT);
         } else {
             PostsListAdapter adapter = new PostsListAdapter(getActivity(), mSite, mIsPage);
