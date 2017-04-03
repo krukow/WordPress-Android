@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -82,6 +83,18 @@ public class PostsListActivity extends AppCompatActivity implements SearchView.O
 
         mSearchAction = menu.findItem( R.id.action_search);
         if (mSearchAction != null && mSearchAction.getActionView() != null) {
+            MenuItemCompat.setOnActionExpandListener(mSearchAction, new MenuItemCompat.OnActionExpandListener() {
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem menuItem) {
+                    return true;
+                }
+
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+                    getSupportActionBar().setTitle(getString(mIsPage ? R.string.pages : R.string.posts));
+                    return true;
+                }
+            });
             ((SearchView) mSearchAction.getActionView()).setOnQueryTextListener(this);
         }
 
@@ -115,8 +128,7 @@ public class PostsListActivity extends AppCompatActivity implements SearchView.O
     }
     @Override
     public boolean onQueryTextSubmit(String query) {
-        // TODO: set filter on list fragment
-        // TODO: update Action Bar title text
+        getSupportActionBar().setTitle("Searching for " + query);
         return false;
     }
 
